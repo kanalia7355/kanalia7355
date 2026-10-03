@@ -1,0 +1,57 @@
+name: Update private-inclusive GitHub stats
+
+on:
+  schedule:
+    - cron: '0 15 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: profile-stats
+  cancel-in-progress: false
+
+jobs:
+  stats:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - name: Check stats authentication
+        env:
+          STATS_TOKEN: ${{ secrets.PROFILE_STATS_TOKEN }}
+        run: |
+          if [ -z "$STATS_TOKEN" ]; then
+            echo "::error::Set the PROFILE_STATS_TOKEN repository secret before running."
+            exit 1
+          fi
+      - name: Generate stats including private repositories
+        uses: stats-organization/github-readme-stats-action@2c498845f71017821efaad14293ebc736156ef21 # v2.1.0
+        with:
+          card: stats
+          options: username=kanalia7355&hide=stars&hide_rank=true&show_icons=true&locale=ja&include_all_commits=false&commits_year=2026
+          path: profile/stats.svg
+          token: ${{ secrets.PROFILE_STATS_TOKEN }}
+          fail_on_error: true
+      - name: Switch README to generated stats
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          path = Path("README.md")
+          text = path.read_text()
+          text = re.sub(r"\[!\[GitHub Stats\]\([^\n]+?\)\]\(https://github.com/kanalia7355\)", "[![GitHub Stats](./profile/stats.svg)](https://github.com/kanalia7355)", text)
+          text = text.replace("コミット数は2026年分、使用言語は公開リポジトリの構成です。非公開の研究や開発は含みません。", "コミット数は非公開リポジトリを含む2026年分のGitHub上のコミット貢献数です。使用言語カードは公開リポジトリのみを対象としています。")
+          path.write_text(text)
+          PY
+      - name: Commit generated card
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add profile/stats.svg README.md
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "Update private-inclusive profile stats"
+          git push
