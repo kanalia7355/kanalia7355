@@ -47,7 +47,7 @@ AIエージェントによる実験・検証・分析・報告・次の提案を
 
 ## GitHub Stats
 
-[![GitHub Stats](https://github-stats-extended.vercel.app/api?username=kanalia7355&hide=stars&hide_rank=true&show_icons=true&locale=ja)](https://github.com/kanalia7355)
+[![GitHub Stats](https://github-stats-extended.vercel.app/api?username=kanalia7355&hide=stars&hide_rank=true&show_icons=true&locale=ja&include_all_commits=false&commits_year=2026)](https://github.com/kanalia7355)
 [![Top Languages](https://github-stats-extended.vercel.app/api/top-langs?username=kanalia7355&layout=compact&langs_count=6)](https://github.com/kanalia7355?tab=repositories)
 
-公開リポジトリの活動・言語構成です。非公開の研究や開発は含みません。
+コミット数は2026年分、使用言語は公開リポジトリの構成です。非公開の研究や開発は含みません。
